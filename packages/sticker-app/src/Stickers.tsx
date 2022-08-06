@@ -29,9 +29,9 @@ export const Stickers: FC = () => {
         <HelloSticker matrix={helloMatrix} />
         <LocationSticker matrix={locationMatrix} font={font} />
       </Canvas>
-      <GestureHandler matrix={pictureMatrix} dimensions={PictureDimensions} />
-      <GestureHandler matrix={helloMatrix} dimensions={HelloStickerDimensions} />
-      <GestureHandler matrix={locationMatrix} dimensions={LocationStickerDimensions} />
+      <GestureHandler matrix={pictureMatrix} dimensions={PictureDimensions} debug />
+      <GestureHandler matrix={helloMatrix} dimensions={HelloStickerDimensions} debug />
+      <GestureHandler matrix={locationMatrix} dimensions={LocationStickerDimensions} debug />
     </View>
   )
 }
