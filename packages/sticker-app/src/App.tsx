@@ -1,8 +1,8 @@
 import React, { FC } from "react"
 import { StatusBar } from "expo-status-bar"
-
-import { Stickers } from "./index"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
+
+import { Stickers } from "./Stickers"
 
 const App: FC = () => {
   return (

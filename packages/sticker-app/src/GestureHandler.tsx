@@ -13,61 +13,66 @@ import { identity4, Matrix4, multiply4, toMatrix3 } from "react-native-redash"
 import { concat, vec3 } from "./utils"
 
 interface Props {
-  matrix: SkiaMutableValue<SkMatrix>
+  skiaMatrix: SkiaMutableValue<SkMatrix>
   dimensions: SkRect
   debug?: boolean
 }
 
-export const GestureHandler: FC<Props> = ({ matrix: skMatrix, dimensions, debug }) => {
+export const GestureHandler: FC<Props> = ({ skiaMatrix, dimensions, debug, children }) => {
   const { x, y, width, height } = dimensions
   const origin = useSharedValue(vec3(0, 0, 0))
-  const matrix = useSharedValue(identity4)
   const offset = useSharedValue(identity4)
+  const matrix = useSharedValue(identity4)
 
   useSharedValueEffect(() => {
-    skMatrix.current = Skia.Matrix(toMatrix3(matrix.value))
+    skiaMatrix.current = Skia.Matrix(toMatrix3(matrix.value))
   }, matrix)
 
-  const pan = Gesture.Pan().onChange(({ changeY, changeX }) => {
+  const pan = Gesture.Pan().onChange(({ changeX, changeY }) => {
     matrix.value = multiply4(Matrix4.translate(changeX, changeY, 0), matrix.value)
   })
 
-  const rotate = Gesture.Rotation()
-    .onBegin(({ anchorX, anchorY }) => {
-      origin.value = vec3(anchorX, anchorY, 0)
-      offset.value = matrix.value
-    })
-    .onChange(({ rotation }) => {
-      matrix.value = concat(offset.value, origin.value, [{ rotateZ: rotation }])
-    })
-
-  const scale = Gesture.Pinch()
+  const pinch = Gesture.Pinch()
     .onBegin(({ focalX, focalY }) => {
-      origin.value = vec3(focalX, focalY, 0)
       offset.value = matrix.value
+      origin.value = [focalX, focalY, 0]
     })
     .onChange(({ scale }) => {
       matrix.value = concat(offset.value, origin.value, [{ scale }])
     })
 
-  const style = useAnimatedStyle(() => ({
-    position: "absolute",
-    left: x,
-    top: y,
-    width,
-    height,
-    backgroundColor: debug ? "rgba(100, 200, 300, 0.4)" : "transparent",
-    transform: [
-      { translateX: -width / 2 },
-      { translateY: -height / 2 },
-      { matrix: matrix.value as any },
-      { translateX: width / 2 },
-      { translateY: height / 2 }
-    ]
-  }))
+  const rotate = Gesture.Rotation()
+    .onBegin(({ anchorX, anchorY }) => {
+      offset.value = matrix.value
+      origin.value = [anchorX, anchorY, 0]
+    })
+    .onChange(({ rotation }) => {
+      matrix.value = concat(offset.value, origin.value, [{ rotateZ: rotation }])
+    })
+
+  const style = useAnimatedStyle(
+    () => ({
+      backgroundColor: debug ? "rgba(100, 200, 300, 0.4)" : "transparent",
+      position: "absolute",
+      left: x,
+      top: y,
+      width,
+      height,
+      transform: [
+        { translateX: -(width / 2) },
+        { translateY: -(height / 2) },
+        // @ts-ignore
+        { matrix: matrix.value },
+        { translateX: width / 2 },
+        { translateY: height / 2 }
+      ]
+    }),
+    [debug, x, y, width, height, matrix]
+  )
 
   return (
-    <GestureDetector gesture={Gesture.Race(pan, rotate, scale)}>
+    <GestureDetector gesture={Gesture.Race(pan, rotate, pinch)}>
+      {/* @ts-ignore */}
       <Animated.View style={style} />
     </GestureDetector>
   )
