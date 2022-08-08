@@ -31,8 +31,8 @@ export const Stickers: FC = () => {
         <LocationSticker matrix={location} font={font} />
       </Canvas>
       <GestureHandler debug skiaMatrix={picture} dimensions={PictureDimensions} />
-      <GestureHandler skiaMatrix={hello} dimensions={HelloStickerDimensions} />
-      <GestureHandler skiaMatrix={location} dimensions={LocationStickerDimensions} />
+      <GestureHandler debug skiaMatrix={hello} dimensions={HelloStickerDimensions} />
+      <GestureHandler debug skiaMatrix={location} dimensions={LocationStickerDimensions} />
     </>
   )
 }
