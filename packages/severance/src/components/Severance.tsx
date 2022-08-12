@@ -13,6 +13,7 @@ import {
 import { background } from "../styles"
 import { createVector } from "../utils"
 import { columns, rows, Symbol } from "./Symbol"
+import { CRT } from "./CRT"
 
 const sfMonoMedium = require("../assets/SF-Mono-Medium.otf")
 
@@ -37,12 +38,14 @@ export const Severance: FC = () => {
 
   return (
     <Canvas style={styles.canvas} onTouch={onTouch}>
-      <Fill color={background} />
-      {columnVec.map((i) =>
-        rowVec.map((j) => (
-          <Symbol key={`${i}-${j}`} i={i} j={j} font={font} clock={clock} pointer={pointer} />
-        ))
-      )}
+      <CRT>
+        <Fill color={background} />
+        {columnVec.map((i) =>
+          rowVec.map((j) => (
+            <Symbol key={`${i}-${j}`} i={i} j={j} font={font} clock={clock} pointer={pointer} />
+          ))
+        )}
+      </CRT>
     </Canvas>
   )
 }

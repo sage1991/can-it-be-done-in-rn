@@ -20,16 +20,13 @@ import alea from "alea"
 import { createVector } from "../utils"
 import { foreground } from "../styles"
 
-export const rows = 15
-export const columns = 10
+export const rows = 10
+export const columns = 8
 
 const digits = createVector(10).map((i) => `${i}`)
 const frequency = 0.0004
 const r = 125
 const amplitude = 5
-
-const noise = createNoise2D(alea("color"))
-const colors = ["#61dafb", "#fb61da", "#dafb61", "#61fbcf"]
 
 interface Props {
   i: number
@@ -51,9 +48,10 @@ export const Symbol: FC<Props> = ({ i, j, font, clock, pointer }) => {
   const y = origin.y + font.getSize() / 2
 
   const transform = useComputedValue<Transforms2d>(() => {
+    const noise = createNoise2D(alea(`${i}-${j}`))
     const translateX = amplitude * noise(x, clock.current * frequency)
     const translateY = amplitude * noise(y, clock.current * frequency)
-    const scale = interpolate(dist(pointer.current, origin), [0, r], [1.5, 0.5], {
+    const scale = interpolate(dist(pointer.current, origin), [0, r], [1.2, 0.3], {
       extrapolateLeft: Extrapolate.CLAMP,
       extrapolateRight: Extrapolate.CLAMP
     })
